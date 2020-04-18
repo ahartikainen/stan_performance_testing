@@ -1,5 +1,6 @@
 import os
 import platform
+import re
 import traceback
 
 import cmdstanpy
