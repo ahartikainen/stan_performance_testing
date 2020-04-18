@@ -12,8 +12,8 @@ jobs:
         config:
           - {os: ubuntu-latest}
           - {os: macos-latest}
-          - {os: windows-latest, rtools: 3.5}
-          - {os: windows-latest, rtools: 4.0}
+          - {os: windows-latest, rtools: 3.5, rtools2: 35}
+          - {os: windows-latest, rtools: 4.0, rtools2: 40}
         python-version: [3.8]
       fail-fast: false
     steps:
@@ -30,6 +30,11 @@ jobs:
           pip install --upgrade pip
           pip install cmdstanpy[all]
 
+      - name: CmdStanPy version
+        run: |
+          python -c "import cmdstanpy;print('CmdStanPy version: {}'.format(cmdstanpy.__version__))"
+
+
       - name: Install toolchain (Windows)
         run: |
           python -m cmdstanpy.install_cxx_toolchain --dir C:\ --version ${{ matrix.config.rtools }}
@@ -37,21 +42,13 @@ jobs:
           echo "::add-path::C:\RTools\RTools40\usr\bin;C:\Rtools\RTools40\mingw64\bin"
         if: matrix.config.os == 'windows-latest'
 
-      - name: Install CmdStan (Windows; RTools 3.5)
+      - name: Install CmdStan (Windows)
         run: |
           SET MAKE=mingw32-make.exe
           gcc --version
           mingw32-make --version
           python -m cmdstanpy.install_cmdstan --version ${{ matrix.cmdstan-version }}
-        if: matrix.config.os == 'windows-latest' && matrix.config.rtools == '3.5'
-
-      - name: Install CmdStan (Windows; RTools 4.0)
-        run: |
-          SET MAKE=mingw32-make.exe
-          gcc --version
-          mingw32-make --version
-          python -m cmdstanpy.install_cmdstan --version ${{ matrix.cmdstan-version }}
-        if: matrix.config.os == 'windows-latest' && matrix.config.rtools == '4.0'
+        if: matrix.config.os == 'windows-latest'
 
       - name: Install CmdStan (Linux, macOS)
         run: |
@@ -60,21 +57,11 @@ jobs:
           python -m cmdstanpy.install_cmdstan --version ${{ matrix.cmdstan-version }}
         if: matrix.config.os != 'windows-latest'
 
-      - name: CmdStanPy version
-        run: |
-          python -c "import cmdstanpy;print('CmdStanPy version: {}'.format(cmdstanpy.__version__))"
-
-      - name: CmdStanPy speed test (Windows; RTools 3.5)
+      - name: CmdStanPy speed test (Windows)
         run: |
           SET MAKE=mingw32-make.exe
-          python run_CmdStanPy.py 35
-        if: matrix.config.os == 'windows-latest' && matrix.config.rtools == '3.5'
-
-      - name: CmdStanPy speed test (Windows; RTools 4.0)
-        run: |
-          SET MAKE=mingw32-make.exe
-          python run_CmdStanPy.py 40
-        if: matrix.config.os == 'windows-latest' && matrix.config.rtools == '4.0'
+          python run_CmdStanPy.py ${{ matrix.config.rtools2 }}
+        if: matrix.config.os == 'windows-latest'
 
       - name: CmdStanPy speed test (macOS, Linux)
         run: |
@@ -84,5 +71,5 @@ jobs:
       - name: Upload results
         uses: actions/upload-artifact@v1
         with:
-          name: Cmdstanpy_results
+          name: CmdStanPy_results
           path: ./results
