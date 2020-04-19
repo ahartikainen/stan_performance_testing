@@ -42,8 +42,8 @@ print("model, good")
 
 fit = model.sample(
     data=stan_data,
-    chains=2,
-    cores=2,
+    chains=1,
+    cores=1,
     seed=1234,
     iter_warmup=100,
     iter_sampling=100,
