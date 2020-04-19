@@ -7,17 +7,12 @@ import pandas as pd
 
 
 def get_timing(fit):
-    """Extract timing."""
+    """Extract timing.
+
+    PyStan source code hacked.
+    """
     timings = []
-    for i, path in enumerate(fit.runset.stdout_files):
-        with open(path) as f:
-            timing = ""
-            add_timing = False
-            for line in f:
-                if "Elapsed Time" in line:
-                    add_timing = True
-                if add_timing:
-                    timing += "\n" + line.strip()
+    for i, timing in enumerate(fit.get_adaptation_info()):
         chain_timing = dict(
             zip(
                 ("warmup", "sampling", "total"),
@@ -45,7 +40,7 @@ if __name__ == "__main__":
 
     print("fit, done", flush=True)
 
-    # timing_df = get_timing(fit)
+    timing_df = get_timing(fit)
     import arviz as az
     summary_df = az.summary(fit)
 
@@ -56,11 +51,11 @@ if __name__ == "__main__":
 
     os.makedirs("results", exist_ok=True)
 
-    # timing_df.to_csv(savepath_timing)
+    timing_df.to_csv(savepath_timing)
     summary_df.to_csv(savepath_summary)
 
     print("Model 1", flush=True)
-    # print("Timing", flush=True)
-    # print(timing_df, flush=True)
+    print("Timing", flush=True)
+    print(timing_df, flush=True)
     print("Summary", flush=True)
     print(summary_df, flush=True)

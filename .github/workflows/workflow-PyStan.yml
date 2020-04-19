@@ -43,6 +43,11 @@ jobs:
           python -c "import pystan;print('PyStan version: {}'.format(pystan.__version__))"
           gcc --version
 
+      - name: Inject timing info
+        run: |
+          python -c "import pystan;print(pystan)"
+          find /opt/hostedtoolcache -type f -wholename "*pystan/stan_fit.hpp" 2>/dev/null | xargs sed -i 's/double sampleDeltaT = 0;/double sampleDeltaT = 0; adaptation_info = comments;\n/'
+
       - name: PyStan speed test
         run: |
           python run_PyStan.py
