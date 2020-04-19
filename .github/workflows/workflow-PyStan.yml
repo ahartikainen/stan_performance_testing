@@ -22,17 +22,26 @@ jobs:
           conda-channels: conda-forge
       - run: conda --version
 
-      - name: Install python dependencies (pip)
+      - name: Install python dependencies (Windows)
         run: |
           pip install --upgrade pip
           conda install m2w64-toolchain libpython -c msys2 -c conda-forge -c anaconda -c defaults
           pip install numpy cython arviz
           pip install pystan
+        if matrix.os == 'windows-latest'
+
+      - name: Install python dependencies (macOS, Linux)
+        run: |
+          pip install --upgrade pip
+          pip install numpy cython arviz
+          pip install pystan
+        if matrix.os != 'windows-latest'
 
       - name: RStan, PyStan and ArviZ versions
         run: |
           python -c "import arviz;print('ArviZ version: {}'.format(arviz.__version__))"
           python -c "import pystan;print('PyStan version: {}'.format(pystan.__version__))"
+          gcc --version
 
       - name: PyStan speed test
         run: |
