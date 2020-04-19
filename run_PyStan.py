@@ -3,8 +3,7 @@ import platform
 import re
 
 import arviz as az
-import cmdstanpy
-from cmdstanpy import CmdStanModel, cmdstan_path
+import pystan
 import pandas as pd
 
 
@@ -32,55 +31,42 @@ def get_timing(fit):
 
 
 stan_file = "./Stan_models/F1_Base.stan"
-stan_data = "./Stan_models/F1_Base.data.R"
+stan_data = pystan.read_rdump("./Stan_models/F1_Base.data.R")
 
 # DEFAULTS
 
 
-model = CmdStanModel(model_name="my_model", stan_file=stan_file,)
+model = pystan.StanModel(file=stan_file)
 print("model, good")
 
-fit = model.sample(
+fit = model.sampling(
     data=stan_data,
     chains=4,
-    cores=2,
+    n_jobs=2,
     seed=1111,
-    iter_warmup=100,
-    iter_sampling=100,
-    metric="diag_e",
-    show_progress=True,
+    warmup=100,
+    iter=200,
 )
 
 print("fit, done", flush=True)
 
-timing_df = get_timing(fit)
+#timing_df = get_timing(fit)
 summary_df = az.summary(fit)
 
-if platform.system() == "Windows":
-    import sys
-
-    rtools = sys.argv[1]
-    savepath_timing = "./results/CmdStanPy_timing_model_1_{}_RTools_{}.csv".format(
-        platform.system(), rtools
-    )
-    savepath_summary = "./results/CmdStanPy_summary_model_1_{}_RTools_{}.csv".format(
-        platform.system(), rtools
-    )
-else:
-    savepath_timing = "./results/CmdStanPy_timing_model_1_{}.csv".format(
-        platform.system()
-    )
-    savepath_summary = "./results/CmdStanPy_summary_model_1_{}.csv".format(
-        platform.system()
-    )
+savepath_timing = "./results/PyStan_timing_model_1_{}.csv".format(
+    platform.system()
+)
+savepath_summary = "./results/PyStan_summary_model_1_{}.csv".format(
+    platform.system()
+)
 
 os.makedirs("results", exist_ok=True)
 
-timing_df.to_csv(savepath_timing)
+#timing_df.to_csv(savepath_timing)
 summary_df.to_csv(savepath_summary)
 
 print("Model 1", flush=True)
-print("Timing", flush=True)
-print(timing_df, flush=True)
+#print("Timing", flush=True)
+#print(timing_df, flush=True)
 print("Summary", flush=True)
 print(summary_df, flush=True)
