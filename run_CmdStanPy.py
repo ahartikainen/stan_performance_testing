@@ -46,8 +46,8 @@ fit = model.sample(
     chains=4,
     cores=2,
     seed=1234,
-    iter_warmup=1_000,
-    iter_sampling=1_000,
+    iter_warmup=100,
+    iter_sampling=100,
     metric="diag_e",
     show_progress=True,
 )
@@ -99,9 +99,9 @@ try:
         data=stan_data,
         chains=4,
         cores=4,
-        seed=123,
-        iter_warmup=1_000,
-        iter_sampling=1_000,
+        seed=1234,
+        iter_warmup=100,
+        iter_sampling=100,
         metric="diag_e",
         show_progress=True,
     )
