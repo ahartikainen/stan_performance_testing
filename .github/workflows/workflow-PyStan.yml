@@ -28,14 +28,14 @@ jobs:
           conda install m2w64-toolchain libpython -c msys2 -c conda-forge -c anaconda -c defaults
           pip install numpy cython arviz
           pip install pystan
-        if matrix.os == 'windows-latest'
+        if: matrix.os == 'windows-latest'
 
       - name: Install python dependencies (macOS, Linux)
         run: |
           pip install --upgrade pip
           pip install numpy cython arviz
           pip install pystan
-        if matrix.os != 'windows-latest'
+        if: matrix.os != 'windows-latest'
 
       - name: RStan, PyStan and ArviZ versions
         run: |
