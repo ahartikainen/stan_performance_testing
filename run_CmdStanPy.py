@@ -52,7 +52,7 @@ fit = model.sample(
     show_progress=True,
 )
 
-print("fit, done")
+print("fit, done", flush=True)
 
 timing_df = get_timing(fit)
 summary_df = fit.summary()
@@ -80,11 +80,11 @@ os.makedirs("results", exist_ok=True)
 timing_df.to_csv(savepath_timing)
 summary_df.to_csv(savepath_summary)
 
-print("Model 1")
-print("Timing")
-print(timing_df)
-print("Summary")
-print(summary_df)
+print("Model 1", flush=True)
+print("Timing", flush=True)
+print(timing_df, flush=True)
+print("Summary", flush=True)
+print(summary_df, flush=True)
 
 try:
     # INCREASE OPTIM AND TUNE
@@ -92,7 +92,8 @@ try:
         print("CXXFLAGS_OS += -O3 -march=native -mtune=native", file=f)
 
     model = CmdStanModel(model_name="my_model2", stan_file=stan_file)
-    print("model2, good")
+    model.compile(force=True)
+    print("model2, good", flush=True)
 
     fit = model.sample(
         data=stan_data,
@@ -105,7 +106,7 @@ try:
         show_progress=True,
     )
 
-    print("fit2, done")
+    print("fit2, done", flush=True)
 
     timing_df = get_timing(fit)
     summary_df = fit.summary()
@@ -133,11 +134,11 @@ try:
     timing_df.to_csv(savepath_timing)
     summary_df.to_csv(savepath_summary)
 
-    print("Model 2")
-    print("Timing")
-    print(timing_df)
-    print("Summary")
-    print(summary_df)
+    print("Model 2", flush=True)
+    print("Timing", flush=True)
+    print(timing_df, flush=True)
+    print("Summary", flush=True)
+    print(summary_df, flush=True)
 except Exception as e:
-    print(e)
-    print(traceback.format_exc())
+    print(e, flush=True)
+    print(traceback.format_exc(), flush=True)
