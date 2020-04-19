@@ -46,7 +46,7 @@ jobs:
       - name: Inject timing info (Windows)
         run: |
           python -c "import pystan;print(pystan)"
-          powershell -command "(Get-Content 'C:\Miniconda\lib\site-packages\pystan\stan_fit.hpp').replace('double sampleDeltaT = 0;', 'double sampleDeltaT = 0; adaptation_info = comments;') | Set-Content 'C:\Miniconda\lib\site-packages\pystan\stan_fit.hpp'"
+          powershell -command "(Get-Content 'C:\\Miniconda\\lib\\site-packages\\pystan\\stan_fit.hpp').replace('double sampleDeltaT = 0;', 'double sampleDeltaT = 0; adaptation_info = comments;') | Set-Content 'C:\\Miniconda\\lib\\site-packages\\pystan\\stan_fit.hpp'"
         if: matrix.os == 'windows-latest'
 
       - name: Inject timing info (macOS, Linux)
