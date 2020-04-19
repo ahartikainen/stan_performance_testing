@@ -24,15 +24,14 @@ def get_timing(fit):
     return pd.DataFrame(timings)
 
 
+stan_file = "./Stan_models/F1_Base.stan"
+stan_data = pystan.read_rdump("./Stan_models/F1_Base.data.R")
+
+# Compile model before __name__ == "__main__" block due osx multiprocessing
+model = pystan.StanModel(file=stan_file)
+print("model, good")
+
 if __name__ == "__main__":
-
-    stan_file = "./Stan_models/F1_Base.stan"
-    stan_data = pystan.read_rdump("./Stan_models/F1_Base.data.R")
-
-    # DEFAULTS
-
-    model = pystan.StanModel(file=stan_file)
-    print("model, good")
 
     fit = model.sampling(
         data=stan_data, chains=4, n_jobs=2, seed=1111, warmup=100, iter=200,
