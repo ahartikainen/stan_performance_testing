@@ -2,7 +2,6 @@ import os
 import platform
 import re
 
-import arviz as az
 import cmdstanpy
 from cmdstanpy import CmdStanModel, cmdstan_path
 import pandas as pd
@@ -54,6 +53,7 @@ if __name__ == "__main__":
     print("fit, done", flush=True)
 
     timing_df = get_timing(fit)
+    import arviz as az
     summary_df = az.summary(fit)
 
     if platform.system() == "Windows":
