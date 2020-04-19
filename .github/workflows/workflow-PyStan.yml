@@ -37,7 +37,7 @@ jobs:
           pip install pystan
         if: matrix.os != 'windows-latest'
 
-      - name: RStan, PyStan and ArviZ versions
+      - name: PyStan and ArviZ versions
         run: |
           python -c "import arviz;print('ArviZ version: {}'.format(arviz.__version__))"
           python -c "import pystan;print('PyStan version: {}'.format(pystan.__version__))"
