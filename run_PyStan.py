@@ -30,43 +30,37 @@ def get_timing(fit):
     return pd.DataFrame(timings)
 
 
-stan_file = "./Stan_models/F1_Base.stan"
-stan_data = pystan.read_rdump("./Stan_models/F1_Base.data.R")
+if __name__ == "__main__":
 
-# DEFAULTS
+    stan_file = "./Stan_models/F1_Base.stan"
+    stan_data = pystan.read_rdump("./Stan_models/F1_Base.data.R")
 
+    # DEFAULTS
 
-model = pystan.StanModel(file=stan_file)
-print("model, good")
+    model = pystan.StanModel(file=stan_file)
+    print("model, good")
 
-fit = model.sampling(
-    data=stan_data,
-    chains=4,
-    n_jobs=2,
-    seed=1111,
-    warmup=100,
-    iter=200,
-)
+    fit = model.sampling(
+        data=stan_data, chains=4, n_jobs=2, seed=1111, warmup=100, iter=200,
+    )
 
-print("fit, done", flush=True)
+    print("fit, done", flush=True)
 
-#timing_df = get_timing(fit)
-summary_df = az.summary(fit)
+    # timing_df = get_timing(fit)
+    summary_df = az.summary(fit)
 
-savepath_timing = "./results/PyStan_timing_model_1_{}.csv".format(
-    platform.system()
-)
-savepath_summary = "./results/PyStan_summary_model_1_{}.csv".format(
-    platform.system()
-)
+    savepath_timing = "./results/PyStan_timing_model_1_{}.csv".format(platform.system())
+    savepath_summary = "./results/PyStan_summary_model_1_{}.csv".format(
+        platform.system()
+    )
 
-os.makedirs("results", exist_ok=True)
+    os.makedirs("results", exist_ok=True)
 
-#timing_df.to_csv(savepath_timing)
-summary_df.to_csv(savepath_summary)
+    # timing_df.to_csv(savepath_timing)
+    summary_df.to_csv(savepath_summary)
 
-print("Model 1", flush=True)
-#print("Timing", flush=True)
-#print(timing_df, flush=True)
-print("Summary", flush=True)
-print(summary_df, flush=True)
+    print("Model 1", flush=True)
+    # print("Timing", flush=True)
+    # print(timing_df, flush=True)
+    print("Summary", flush=True)
+    print(summary_df, flush=True)

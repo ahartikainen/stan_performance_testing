@@ -31,56 +31,56 @@ def get_timing(fit):
     return pd.DataFrame(timings)
 
 
-stan_file = "./Stan_models/F1_Base.stan"
-stan_data = "./Stan_models/F1_Base.data.R"
+if __name__ == "__main__":
+    stan_file = "./Stan_models/F1_Base.stan"
+    stan_data = "./Stan_models/F1_Base.data.R"
 
-# DEFAULTS
+    # DEFAULTS
 
+    model = CmdStanModel(model_name="my_model", stan_file=stan_file,)
+    print("model, good")
 
-model = CmdStanModel(model_name="my_model", stan_file=stan_file,)
-print("model, good")
-
-fit = model.sample(
-    data=stan_data,
-    chains=4,
-    cores=2,
-    seed=1111,
-    iter_warmup=100,
-    iter_sampling=100,
-    metric="diag_e",
-    show_progress=True,
-)
-
-print("fit, done", flush=True)
-
-timing_df = get_timing(fit)
-summary_df = az.summary(fit)
-
-if platform.system() == "Windows":
-    import sys
-
-    rtools = sys.argv[1]
-    savepath_timing = "./results/CmdStanPy_timing_model_1_{}_RTools_{}.csv".format(
-        platform.system(), rtools
-    )
-    savepath_summary = "./results/CmdStanPy_summary_model_1_{}_RTools_{}.csv".format(
-        platform.system(), rtools
-    )
-else:
-    savepath_timing = "./results/CmdStanPy_timing_model_1_{}.csv".format(
-        platform.system()
-    )
-    savepath_summary = "./results/CmdStanPy_summary_model_1_{}.csv".format(
-        platform.system()
+    fit = model.sample(
+        data=stan_data,
+        chains=4,
+        cores=2,
+        seed=1111,
+        iter_warmup=100,
+        iter_sampling=100,
+        metric="diag_e",
+        show_progress=True,
     )
 
-os.makedirs("results", exist_ok=True)
+    print("fit, done", flush=True)
 
-timing_df.to_csv(savepath_timing)
-summary_df.to_csv(savepath_summary)
+    timing_df = get_timing(fit)
+    summary_df = az.summary(fit)
 
-print("Model 1", flush=True)
-print("Timing", flush=True)
-print(timing_df, flush=True)
-print("Summary", flush=True)
-print(summary_df, flush=True)
+    if platform.system() == "Windows":
+        import sys
+
+        rtools = sys.argv[1]
+        savepath_timing = "./results/CmdStanPy_timing_model_1_{}_RTools_{}.csv".format(
+            platform.system(), rtools
+        )
+        savepath_summary = "./results/CmdStanPy_summary_model_1_{}_RTools_{}.csv".format(
+            platform.system(), rtools
+        )
+    else:
+        savepath_timing = "./results/CmdStanPy_timing_model_1_{}.csv".format(
+            platform.system()
+        )
+        savepath_summary = "./results/CmdStanPy_summary_model_1_{}.csv".format(
+            platform.system()
+        )
+
+    os.makedirs("results", exist_ok=True)
+
+    timing_df.to_csv(savepath_timing)
+    summary_df.to_csv(savepath_summary)
+
+    print("Model 1", flush=True)
+    print("Timing", flush=True)
+    print(timing_df, flush=True)
+    print("Summary", flush=True)
+    print(summary_df, flush=True)
