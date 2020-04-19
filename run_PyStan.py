@@ -34,7 +34,12 @@ print("model, good")
 if __name__ == "__main__":
 
     fit = model.sampling(
-        data=stan_data, chains=4, n_jobs=2, seed=1111, warmup=100, iter=200,
+        data=stan_data,
+        chains=4,
+        n_jobs=2 if platform.system() in ("Linus", "Windows") else 1,
+        seed=1111,
+        warmup=100,
+        iter=200,
     )
 
     print("fit, done", flush=True)
