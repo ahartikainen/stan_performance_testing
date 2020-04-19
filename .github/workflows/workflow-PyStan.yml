@@ -1,11 +1,11 @@
-name: Linux
+name: PyStan
 
 on: [push]
 
 jobs:
   tests:
-    name: tests
-    runs-on: ${{ matrix.config.os }}
+    name: PyStan
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
