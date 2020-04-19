@@ -1,7 +1,6 @@
 import os
 import platform
 import re
-import traceback
 
 import cmdstanpy
 from cmdstanpy import CmdStanModel, cmdstan_path
@@ -43,7 +42,7 @@ print("model, good")
 
 fit = model.sample(
     data=stan_data,
-    chains=4,
+    chains=2,
     cores=2,
     seed=1234,
     iter_warmup=100,
@@ -85,60 +84,3 @@ print("Timing", flush=True)
 print(timing_df, flush=True)
 print("Summary", flush=True)
 print(summary_df, flush=True)
-
-try:
-    # INCREASE OPTIM AND TUNE
-    with open(os.path.join(cmdstanpy.cmdstan_path(), "make", "local"), "w") as f:
-        print("CXXFLAGS_OS += -O3 -march=native -mtune=native", file=f)
-
-    model = CmdStanModel(model_name="my_model2", stan_file=stan_file)
-    model.compile(force=True)
-    print("model2, good", flush=True)
-
-    fit = model.sample(
-        data=stan_data,
-        chains=4,
-        cores=4,
-        seed=1234,
-        iter_warmup=100,
-        iter_sampling=100,
-        metric="diag_e",
-        show_progress=True,
-    )
-
-    print("fit2, done", flush=True)
-
-    timing_df = get_timing(fit)
-    summary_df = fit.summary()
-
-    if platform.system() == "Windows":
-        import sys
-
-        rtools = sys.argv[1]
-        savepath_timing = "./results/CmdStanPy_timing_model_2_{}_RTools_{}.csv".format(
-            platform.system(), rtools
-        )
-        savepath_summary = "./results/CmdStanPy_summary_model_2_{}_RTools_{}.csv".format(
-            platform.system(), rtools
-        )
-    else:
-        savepath_timing = "./results/CmdStanPy_timing_model_2_{}.csv".format(
-            platform.system()
-        )
-        savepath_summary = "./results/CmdStanPy_summary_model_2_{}.csv".format(
-            platform.system()
-        )
-
-    os.makedirs("results", exist_ok=True)
-
-    timing_df.to_csv(savepath_timing)
-    summary_df.to_csv(savepath_summary)
-
-    print("Model 2", flush=True)
-    print("Timing", flush=True)
-    print(timing_df, flush=True)
-    print("Summary", flush=True)
-    print(summary_df, flush=True)
-except Exception as e:
-    print(e, flush=True)
-    print(traceback.format_exc(), flush=True)
