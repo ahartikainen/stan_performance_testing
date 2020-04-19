@@ -41,6 +41,7 @@ if __name__ == "__main__":
 
     timing_df = get_timing(fit)
     import arviz as az
+
     summary_df = az.summary(fit)
 
     savepath_timing = "./results/PyStan_timing_model_1_{}.csv".format(platform.system())

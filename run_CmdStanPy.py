@@ -54,6 +54,7 @@ if __name__ == "__main__":
 
     timing_df = get_timing(fit)
     import arviz as az
+
     summary_df = az.summary(fit)
 
     if platform.system() == "Windows":

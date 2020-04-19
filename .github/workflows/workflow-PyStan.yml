@@ -47,15 +47,18 @@ jobs:
         run: |
           python -c "import pystan;print(pystan)"
           powershell -command "$PyStanPath = 'C:\Miniconda\lib\site-packages\pystan\stan_fit.hpp'; (Get-Content $PyStanPath).replace('double sampleDeltaT = 0;', 'double sampleDeltaT = 0; adaptation_info = comments;') | Set-Content $PyStanPath"
+        if: matrix.os == 'windows-latest'
 
       - name: Inject timing info (macOS, Linux)
         run: |
           python -c "import pystan;print(pystan)"
           find /usr/share/miniconda/lib/python3.8/site-packages -type f -wholename "*pystan/stan_fit.hpp" 2>/dev/null | xargs sed -i 's/double sampleDeltaT = 0;/double sampleDeltaT = 0; adaptation_info = comments;\n/'
+        if: matrix.os != 'windows-latest'
 
       - name: PyStan speed test
         run: |
           python run_PyStan.py
+
 
       - name: Upload results
         uses: actions/upload-artifact@v1
