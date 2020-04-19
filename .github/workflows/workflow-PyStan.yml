@@ -25,7 +25,8 @@ jobs:
       - name: Install python dependencies (pip)
         run: |
           pip install --upgrade pip
-          conda install arviz pystan -c conda-forge
+          conda install m2w64-toolchain libpython -c msys2 -c conda-forge -c anaconda -c defaults
+          pip install arviz pystan
 
       - name: RStan, PyStan and ArviZ versions
         run: |
