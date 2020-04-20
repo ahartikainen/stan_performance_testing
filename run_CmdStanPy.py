@@ -1,6 +1,7 @@
 import os
 import platform
 import re
+from time import time
 
 import cmdstanpy
 from cmdstanpy import CmdStanModel, cmdstan_path
@@ -30,32 +31,60 @@ def get_timing(fit):
     return pd.DataFrame(timings)
 
 
+def t(func, *args, timing_name=None, **kwargs):
+    """Time function."""
+    start_time = time()
+    res = func(*args, **kwargs)
+    duration = time() - start_time
+    duration_unit = "seconds"
+    if duration > (60 * 60):
+        duration /= 60 * 60
+        duration_unit = "hours"
+    elif duration > (60 * 3):
+        duration /= 60
+        duration_unit = "minutes"
+    print(
+        f"{timing_name + ': ' if timing_name is not None else ''}Duration",
+        "{duration:.1f}",
+        duration_unit,
+        flush=True,
+    )
+    return res
+
+
 if __name__ == "__main__":
     stan_file = "./Stan_models/F1_Base.stan"
     stan_data = "./Stan_models/F1_Base.data.R"
 
     # DEFAULTS
 
-    model = CmdStanModel(model_name="my_model", stan_file=stan_file,)
-    print("model, good")
+    model = t(
+        CmdStanModel,
+        model_name="my_model",
+        stan_file=stan_file,
+        timing_name="CmdStanModel",
+    )
+    print("model, done", flush=True)
 
-    fit = model.sample(
+    fit = t(
+        model.sample,
+        timing_name="model.sample",
         data=stan_data,
         chains=4,
         cores=2,
         seed=1111,
-        iter_warmup=100,
-        iter_sampling=100,
+        iter_warmup=1000,
+        iter_sampling=1000,
         metric="diag_e",
         show_progress=True,
     )
 
     print("fit, done", flush=True)
 
-    timing_df = get_timing(fit)
+    timing_df = t(get_timing, fit, timing_name="get_timing")
     import arviz as az
 
-    summary_df = az.summary(fit)
+    summary_df = t(az.summary, fit, timing_name="az.summary")
 
     if platform.system() == "Windows":
         import sys
@@ -77,8 +106,8 @@ if __name__ == "__main__":
 
     os.makedirs("results", exist_ok=True)
 
-    timing_df.to_csv(savepath_timing)
-    summary_df.to_csv(savepath_summary)
+    t(timing_df.to_csv, savepath_timing, timing_name="timing_df.to_csv")
+    t(summary_df.to_csv, savepath_summary, timing_name="summary_df.to_csv")
 
     print("Model 1", flush=True)
     print("Timing", flush=True)
