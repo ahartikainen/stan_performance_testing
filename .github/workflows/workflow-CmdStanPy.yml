@@ -45,14 +45,18 @@ jobs:
         run: |
           SET MAKE=mingw32-make.exe
           gcc --version
+          which gcc
           mingw32-make --version
+          which mingw32-make
           python -m cmdstanpy.install_cmdstan --version ${{ matrix.cmdstan-version }}
         if: matrix.config.os == 'windows-latest'
 
       - name: Install CmdStan (Linux, macOS)
         run: |
           gcc --version
+          which gcc
           make --version
+          which make
           python -m cmdstanpy.install_cmdstan --version ${{ matrix.cmdstan-version }}
         if: matrix.config.os != 'windows-latest'
 
