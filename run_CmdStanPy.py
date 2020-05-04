@@ -56,7 +56,7 @@ if __name__ == "__main__":
     from glob import glob
 
     stan_files = glob("./Stan_models/*.stan")
-    stan_datas = [re.sub(r'.stan$', ".data.R", path) for path in stan_files]
+    stan_datas = [re.sub(r".stan$", ".data.R", path) for path in stan_files]
 
     # DEFAULTS
 
@@ -100,13 +100,25 @@ if __name__ == "__main__":
             savepath_timing = f"./results/CmdStanPy_{model_name}_timing_{platform.system()}_RTools_{rtools}.csv"
             savepath_summary = f"./results/CmdStanPy_{model_name}_summary_{platform.system()}_RTools_{rtools}.csv"
         else:
-            savepath_timing = f"./results/CmdStanPy_{model_name}_timing_{platform.system()}.csv"
-            savepath_summary = f"./results/CmdStanPy_{model_name}_summary_{platform.system()}.csv"
+            savepath_timing = (
+                f"./results/CmdStanPy_{model_name}_timing_{platform.system()}.csv"
+            )
+            savepath_summary = (
+                f"./results/CmdStanPy_{model_name}_summary_{platform.system()}.csv"
+            )
 
         os.makedirs("results", exist_ok=True)
 
-        t(timing_df.to_csv, savepath_timing, timing_name=f"{model_name}: timing_df.to_csv")
-        t(summary_df.to_csv, savepath_summary, timing_name=f"{model_name}: summary_df.to_csv")
+        t(
+            timing_df.to_csv,
+            savepath_timing,
+            timing_name=f"{model_name}: timing_df.to_csv",
+        )
+        t(
+            summary_df.to_csv,
+            savepath_summary,
+            timing_name=f"{model_name}: summary_df.to_csv",
+        )
 
         print(model_name, flush=True)
         print(f"Timing: {model_name}", flush=True)

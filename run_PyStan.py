@@ -50,13 +50,17 @@ if __name__ == "__main__":
     from glob import glob
 
     stan_files = glob("./Stan_models/*.stan")
-    stan_datas = [re.sub(r'.stan$', ".data.R", path) for path in stan_files]
+    stan_datas = [re.sub(r".stan$", ".data.R", path) for path in stan_files]
 
     for stan_model, stan_data in zip(stan_files, stan_datas):
         model_name = os.path.basename(stan_model)
         print(f"\n\n{model_name}\n\n")
 
-        model = t(pystan.StanModel, timing_name=f"pystan.StanModel {model_name}", file=stan_model)
+        model = t(
+            pystan.StanModel,
+            timing_name=f"pystan.StanModel {model_name}",
+            file=stan_model,
+        )
         print(f"model: {model_name}, done", flush=True)
 
         fit = t(
@@ -77,13 +81,25 @@ if __name__ == "__main__":
 
         summary_df = t(az.summary, fit, timing_name=f"{model_name}: az.summary")
 
-        savepath_timing = f"./results/PyStan_{model_name}_timing_{platform.system()}.csv"
-        savepath_summary = f"./results/PyStan_{model_name}_summary_{platform.system()}.csv"
+        savepath_timing = (
+            f"./results/PyStan_{model_name}_timing_{platform.system()}.csv"
+        )
+        savepath_summary = (
+            f"./results/PyStan_{model_name}_summary_{platform.system()}.csv"
+        )
 
         os.makedirs("results", exist_ok=True)
 
-        t(timing_df.to_csv, savepath_timing, timing_name=f"{model_name}: timing_df.to_csv")
-        t(summary_df.to_csv, savepath_summary, timing_name=f"{model_name}: summary_df.to_csv")
+        t(
+            timing_df.to_csv,
+            savepath_timing,
+            timing_name=f"{model_name}: timing_df.to_csv",
+        )
+        t(
+            summary_df.to_csv,
+            savepath_summary,
+            timing_name=f"{model_name}: summary_df.to_csv",
+        )
 
         print(model_name, flush=True)
         print(f"Timing: {model_name}", flush=True)

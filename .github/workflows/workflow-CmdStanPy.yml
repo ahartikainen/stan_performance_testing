@@ -32,7 +32,7 @@ jobs:
 
       - name: CmdStanPy version
         run: |
-          python -c "import cmdstanpy;print('CmdStanPy version: {}\nLocation: {}'.format(cmdstanpy.__version__, os.path.dirname(cmdstanpy.__file__)))"
+          python -c "import cmdstanpy,os;print('CmdStanPy version: {}\nLocation: {}'.format(cmdstanpy.__version__, os.path.dirname(cmdstanpy.__file__)))"
 
       - name: Inject RTools40 (Windows)
         run: |
