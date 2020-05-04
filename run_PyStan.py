@@ -56,7 +56,7 @@ if __name__ == "__main__":
         model_name = os.path.basename(stan_model)
         print(f"\n\n{model_name}\n\n")
 
-        model = t(pystan.StanModel, timing_name=f"pystan.StanModel {model_name}", file=stan_file)
+        model = t(pystan.StanModel, timing_name=f"pystan.StanModel {model_name}", file=stan_model)
         print(f"model: {model_name}, done", flush=True)
 
         fit = t(
