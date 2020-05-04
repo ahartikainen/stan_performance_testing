@@ -21,6 +21,14 @@ jobs:
           python-version: ${{ matrix.python-version }}
           conda-channels: conda-forge
       - run: conda --version
+      
+      - name: Install gnu-find and gnu-sed (macOS)
+        run: |
+          brew install gnu-sed
+          brew install findutils
+          echo 'export PATH="/usr/local/opt/gnu-sed/libexec/gnubin:$PATH"' >> ~/home/.bash_profile
+          echo 'export PATH="/usr/local/opt/findutils/libexec/gnubin:$PATH"' >> ~/home/.bash_profile
+        if: matrix.os == 'macos-latest'
 
       - name: Install python dependencies (Windows)
         run: |
