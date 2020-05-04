@@ -48,7 +48,6 @@ jobs:
 
       - name: Check RTools 3.5 (Windows)
         run: |
-          python -m cmdstanpy.install_cxx_toolchain --dir C:\ --version ${{ matrix.config.rtools }}
           dir C:\RTools\RTools35\bin
           dir C:\Rtools\RTools35\mingw_64\bin
         if: (matrix.config.os == 'windows-latest') && (matrix.config.rtools2 == '35')
