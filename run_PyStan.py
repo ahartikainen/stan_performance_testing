@@ -47,42 +47,47 @@ def t(func, *args, timing_name=None, **kwargs):
 
 
 if __name__ == "__main__":
-    stan_file = "./Stan_models/F1_Base.stan"
-    stan_data = pystan.read_rdump("./Stan_models/F1_Base.data.R")
+    from glob import glob
 
-    model = t(pystan.StanModel, timing_name="pystan.StanModel", file=stan_file)
-    print("model, done", flush=True)
+    stan_files = glob("./Stan_models/*.stan")
+    stan_datas = [re.sub(r'.stan$', ".data.R", path) for path in stan_files]
 
-    fit = t(
-        model.sampling,
-        timing_name="model.sampling",
-        data=stan_data,
-        chains=4,
-        n_jobs=2 if platform.system() in ("Linus", "Windows") else 1,
-        seed=1111,
-        warmup=1000,
-        iter=2000,
-    )
+    for stan_model, stan_data in zip(stan_files, stan_datas):
+        model_name = os.path.basename(stan_model)
+        print(f"\n\n{model_name}\n\n")
 
-    print("fit, done", flush=True)
+        model = t(pystan.StanModel, timing_name=f"pystan.StanModel {model_name}", file=stan_file)
+        print(f"model: {model_name}, done", flush=True)
 
-    timing_df = t(get_timing, fit, timing_name="get_timing")
-    import arviz as az
+        fit = t(
+            model.sampling,
+            timing_name=f"{model_name}.sampling",
+            data=stan_data,
+            chains=4,
+            n_jobs=2 if platform.system() in ("Linus", "Windows") else 1,
+            seed=1111,
+            warmup=1000,
+            iter=2000,
+        )
 
-    summary_df = t(az.summary, fit, timing_name="az.summary")
+        print(f"fit: {model_name}, done", flush=True)
 
-    savepath_timing = "./results/PyStan_timing_model_1_{}.csv".format(platform.system())
-    savepath_summary = "./results/PyStan_summary_model_1_{}.csv".format(
-        platform.system()
-    )
+        timing_df = t(get_timing, fit, timing_name=f"{model_name}: get_timing")
+        import arviz as az
 
-    os.makedirs("results", exist_ok=True)
+        summary_df = t(az.summary, fit, timing_name=f"{model_name}: az.summary")
 
-    t(timing_df.to_csv, savepath_timing, timing_name="timing_df.to_csv")
-    t(summary_df.to_csv, savepath_summary, timing_name="summary_df.to_csv")
+        savepath_timing = f"./results/PyStan_{model_name}_timing_{platform.system()}.csv"
+        savepath_summary = f"./results/PyStan_{model_name}_summary_{platform.system()}.csv"
 
-    print("Model 1", flush=True)
-    print("Timing", flush=True)
-    print(timing_df, flush=True)
-    print("Summary", flush=True)
-    print(summary_df, flush=True)
+        os.makedirs("results", exist_ok=True)
+
+        t(timing_df.to_csv, savepath_timing, timing_name=f"{model_name}: timing_df.to_csv")
+        t(summary_df.to_csv, savepath_summary, timing_name=f"{model_name}: summary_df.to_csv")
+
+        print(model_name, flush=True)
+        print(f"Timing: {model_name}", flush=True)
+        print(timing_df, flush=True)
+        print(f"Summary: {model_name}", flush=True)
+        print(summary_df, flush=True)
+    print("\n\nFinished", flush=True)
