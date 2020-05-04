@@ -50,11 +50,17 @@ jobs:
           powershell -command "(Get-Content 'C:\\Miniconda\\lib\\site-packages\\pystan\\stan_fit.hpp').replace('double sampleDeltaT = 0;', 'double sampleDeltaT = 0; adaptation_info = comments;') | Set-Content 'C:\\Miniconda\\lib\\site-packages\\pystan\\stan_fit.hpp'"
         if: matrix.os == 'windows-latest'
 
-      - name: Inject timing info (macOS, Linux)
+      - name: Inject timing info (macOS)
+        run: |
+          python -c "import pystan;print(pystan)"
+          find /usr/local/miniconda/lib/python3.8/site-packages -type f -wholename "*pystan/stan_fit.hpp" 2>/dev/null | xargs sed -i 's/double sampleDeltaT = 0;/double sampleDeltaT = 0; adaptation_info = comments;\n/'
+        if: matrix.os == 'macos-latest'
+
+      - name: Inject timing info (Linux)
         run: |
           python -c "import pystan;print(pystan)"
           find /usr/share/miniconda/lib/python3.8/site-packages -type f -wholename "*pystan/stan_fit.hpp" 2>/dev/null | xargs sed -i 's/double sampleDeltaT = 0;/double sampleDeltaT = 0; adaptation_info = comments;\n/'
-        if: matrix.os != 'windows-latest'
+        if: matrix.os == 'ubuntu-latest'
 
       - name: PyStan speed test
         run: |
