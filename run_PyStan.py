@@ -39,7 +39,7 @@ def t(func, *args, timing_name=None, **kwargs):
         duration_unit = "minutes"
     print(
         f"{timing_name + ': ' if timing_name is not None else ''}Duration",
-        "{duration:.1f}",
+        f"{duration:.1f}",
         duration_unit,
         flush=True,
     )
