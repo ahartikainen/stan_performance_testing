@@ -62,7 +62,7 @@ if __name__ == "__main__":
         fit = t(
             model.sampling,
             timing_name=f"{model_name}.sampling",
-            data=stan_data,
+            data=pystan.read_rdump(stan_data),
             chains=4,
             n_jobs=2 if platform.system() in ("Linus", "Windows") else 1,
             seed=1111,
