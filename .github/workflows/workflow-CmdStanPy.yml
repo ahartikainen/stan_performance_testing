@@ -48,7 +48,7 @@ jobs:
 
       - name: Install mingw32-make RTools 4.0 (Windows)
         run: |
-          pacman -Sy mingw-w64-x86_64-make
+          pacman -Sy mingw-w64-x86_64-make --noconfirm
         if: (matrix.config.os == 'windows-latest') && (matrix.config.rtools2 == '40')
 
       - name: Check RTools 3.5 (Windows)
