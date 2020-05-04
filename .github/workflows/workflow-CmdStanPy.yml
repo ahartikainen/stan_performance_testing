@@ -27,12 +27,17 @@ jobs:
 
       - name: Install CmdStanPy
         run: |
-          pip install --upgrade pip
-          pip install cmdstanpy[all] arviz
+          python -m pip install --upgrade pip
+          python -m pip install cmdstanpy[all] arviz
 
       - name: CmdStanPy version
         run: |
-          python -c "import cmdstanpy;print('CmdStanPy version: {}'.format(cmdstanpy.__version__))"
+          python -c "import cmdstanpy;print('CmdStanPy version: {}\nLocation: {}'.format(cmdstanpy.__version__, os.path.dirname(cmdstanpy.__file__)))"
+
+      - name: Inject RTools40 (Windows)
+        run: |
+          powershell -command "(Get-Content 'C:\\hostedtoolcache\\windows\\Python\\3.8.2\\x64\\lib\\site-packages\\cmdstanpy\\install_cxx_toolchain.py').replace('https://cran.r-project.org/bin/windows/testing/rtools40-x86_64.exe', 'https://cran.r-project.org/bin/windows/Rtools/rtools40-x86_64.exe') | Set-Content 'C:\\hostedtoolcache\\windows\\Python\\3.8.2\\x64\\lib\\site-packages\\cmdstanpy\\install_cxx_toolchain.py'"
+        if: matrix.config.os == 'windows-latest'
 
       - name: Install toolchain (Windows)
         run: |
