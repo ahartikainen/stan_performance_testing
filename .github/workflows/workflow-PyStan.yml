@@ -26,6 +26,7 @@ jobs:
         run: |
           brew install gnu-sed
           brew install findutils
+          touch ~/home/.bash_profile
           echo 'export PATH="/usr/local/opt/gnu-sed/libexec/gnubin:$PATH"' >> ~/home/.bash_profile
           echo 'export PATH="/usr/local/opt/findutils/libexec/gnubin:$PATH"' >> ~/home/.bash_profile
         if: matrix.os == 'macos-latest'
