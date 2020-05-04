@@ -46,6 +46,19 @@ jobs:
           echo "::add-path::C:\RTools\RTools40\usr\bin;C:\Rtools\RTools40\mingw64\bin"
         if: matrix.config.os == 'windows-latest'
 
+      - name: Check RTools 3.5 (Windows)
+        run: |
+          python -m cmdstanpy.install_cxx_toolchain --dir C:\ --version ${{ matrix.config.rtools }}
+          dir C:\RTools\RTools35\bin
+          dir C:\Rtools\RTools35\mingw_64\bin
+        if: (matrix.config.os == 'windows-latest') && (matrix.config.rtools2 == '35')
+
+      - name: Check RTools 4.0 (Windows)
+        run: |
+          dir C:\RTools\RTools40\usr\bin
+          dir C:\Rtools\RTools40\mingw64\bin
+        if: (matrix.config.os == 'windows-latest') && (matrix.config.rtools2 == '40')
+
       - name: Install CmdStan (Windows)
         run: |
           SET MAKE=mingw32-make.exe
