@@ -46,6 +46,11 @@ jobs:
           echo "::add-path::C:\RTools\RTools40\usr\bin;C:\Rtools\RTools40\mingw64\bin"
         if: matrix.config.os == 'windows-latest'
 
+      - name: Install mingw32-make RTools 4.0 (Windows)
+        run: |
+          pacman -Sy mingw-w64-x86_64-make
+        if: (matrix.config.os == 'windows-latest') && (matrix.config.rtools2 == '40')
+
       - name: Check RTools 3.5 (Windows)
         run: |
           dir C:\RTools\RTools35\bin
@@ -57,7 +62,7 @@ jobs:
           dir C:\RTools\RTools40\usr\bin
           dir C:\Rtools\RTools40\mingw64\bin
         if: (matrix.config.os == 'windows-latest') && (matrix.config.rtools2 == '40')
-
+      
       - name: Install CmdStan (Windows)
         run: |
           SET MAKE=mingw32-make.exe
