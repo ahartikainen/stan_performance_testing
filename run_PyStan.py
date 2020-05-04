@@ -60,7 +60,6 @@ if __name__ == "__main__":
             pystan.StanModel,
             timing_name=f"pystan.StanModel {model_name}",
             file=stan_model,
-            verbose=True,
         )
         print(f"model: {model_name}, done", flush=True)
 

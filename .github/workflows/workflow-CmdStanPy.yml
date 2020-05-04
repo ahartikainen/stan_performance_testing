@@ -70,6 +70,7 @@ jobs:
           which gcc
           mingw32-make --version
           which mingw32-make
+          gcc -dumpspecs
           python -m cmdstanpy.install_cmdstan --version ${{ matrix.cmdstan-version }}
         if: matrix.config.os == 'windows-latest'
 
@@ -79,6 +80,7 @@ jobs:
           which gcc
           make --version
           which make
+          gcc -dumpspecs
           python -m cmdstanpy.install_cmdstan --version ${{ matrix.cmdstan-version }}
         if: matrix.config.os != 'windows-latest'
 

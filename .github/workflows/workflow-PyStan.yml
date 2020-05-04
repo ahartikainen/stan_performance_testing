@@ -43,6 +43,7 @@ jobs:
           python -c "import pystan;print('PyStan version: {}'.format(pystan.__version__))"
           gcc --version
           which gcc
+          gcc -dumpspecs
 
       - name: Inject timing info (Windows)
         run: |
