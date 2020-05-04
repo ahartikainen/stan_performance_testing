@@ -8,13 +8,12 @@ jobs:
     runs-on: ${{ matrix.config.os }}
     strategy:
       matrix:
-        cmdstan-version: [2.19.1, 2.22.1]
+        cmdstan-version: [2.19.1, 2.22.1, 2.23.0]
         config:
           - {os: ubuntu-latest}
           - {os: macos-latest}
-          # Windows just fails
-          #- {os: windows-latest, rtools: 3.5, rtools2: 35}
-          #- {os: windows-latest, rtools: 4.0, rtools2: 40}
+          - {os: windows-latest, rtools: 3.5, rtools2: 35}
+          - {os: windows-latest, rtools: 4.0, rtools2: 40}
         python-version: [3.8]
       fail-fast: false
     steps:
@@ -28,12 +27,17 @@ jobs:
 
       - name: Install CmdStanPy
         run: |
-          pip install --upgrade pip
-          pip install cmdstanpy[all] arviz
+          python -m pip install --upgrade pip
+          python -m pip install cmdstanpy[all] arviz
 
       - name: CmdStanPy version
         run: |
-          python -c "import cmdstanpy;print('CmdStanPy version: {}'.format(cmdstanpy.__version__))"
+          python -c "import cmdstanpy,os;print('CmdStanPy version: {}\nLocation: {}'.format(cmdstanpy.__version__, os.path.dirname(cmdstanpy.__file__)))"
+
+      - name: Inject RTools40 (Windows)
+        run: |
+          powershell -command "(Get-Content 'C:\\hostedtoolcache\\windows\\Python\\3.8.2\\x64\\lib\\site-packages\\cmdstanpy\\install_cxx_toolchain.py').replace('https://cran.r-project.org/bin/windows/testing/rtools40-x86_64.exe', 'https://cran.r-project.org/bin/windows/Rtools/rtools40-x86_64.exe') | Set-Content 'C:\\hostedtoolcache\\windows\\Python\\3.8.2\\x64\\lib\\site-packages\\cmdstanpy\\install_cxx_toolchain.py'"
+        if: matrix.config.os == 'windows-latest'
 
       - name: Install toolchain (Windows)
         run: |
@@ -42,18 +46,39 @@ jobs:
           echo "::add-path::C:\RTools\RTools40\usr\bin;C:\Rtools\RTools40\mingw64\bin"
         if: matrix.config.os == 'windows-latest'
 
+      - name: Install mingw32-make RTools 4.0 (Windows)
+        run: |
+          pacman -Sy mingw-w64-x86_64-make --noconfirm
+        if: (matrix.config.os == 'windows-latest') && (matrix.config.rtools2 == '40')
+
+      - name: Check RTools 3.5 (Windows)
+        run: |
+          dir C:\RTools\RTools35\bin
+          dir C:\Rtools\RTools35\mingw_64\bin
+        if: (matrix.config.os == 'windows-latest') && (matrix.config.rtools2 == '35')
+
+      - name: Check RTools 4.0 (Windows)
+        run: |
+          dir C:\RTools\RTools40\usr\bin
+          dir C:\Rtools\RTools40\mingw64\bin
+        if: (matrix.config.os == 'windows-latest') && (matrix.config.rtools2 == '40')
+      
       - name: Install CmdStan (Windows)
         run: |
           SET MAKE=mingw32-make.exe
           gcc --version
+          which gcc
           mingw32-make --version
+          which mingw32-make
           python -m cmdstanpy.install_cmdstan --version ${{ matrix.cmdstan-version }}
         if: matrix.config.os == 'windows-latest'
 
       - name: Install CmdStan (Linux, macOS)
         run: |
           gcc --version
+          which gcc
           make --version
+          which make
           python -m cmdstanpy.install_cmdstan --version ${{ matrix.cmdstan-version }}
         if: matrix.config.os != 'windows-latest'
 
